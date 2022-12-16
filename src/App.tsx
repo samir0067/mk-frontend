@@ -1,4 +1,4 @@
-import Mockup from "./Mockup"
+import Mockup from "organisms/Mockup";
 
 function App() {
   return (
