@@ -1,24 +1,24 @@
-import Mockup from "organisms/Mockup";
+import React, { FC } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import NotFound from "pages/NotFound";
+import Creatives from "organisms/Creatives";
+import Header from "molecules/Header";
+import CreativeForm from "organisms/CreativeForm";
 
-function App() {
+const App: FC = () => {
   return (
     <>
-      <header
-        style={{
-          marginTop: 16,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-        }}
-      >
-        <img src="mediakeys.png" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-      </header>
-      <Mockup />
+      <Header />
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Creatives />} />
+          <Route path="/creatives" element={<CreativeForm />} />
+          {/*<Route path="/creatives/:id" element={<CreativeForm />} />*/}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
-}
+};
 
 export default App;
