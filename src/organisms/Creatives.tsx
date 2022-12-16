@@ -1,14 +1,16 @@
 import React, { FC } from "react";
-import { Grid } from "@mui/material";
-import CreativeList from "organisms/CreativeList";
-import CreativeDetail from "organisms/CreativeDetail";
+import { Container, Grid } from "@mui/material";
+import { Outlet } from "react-router-dom";
+import Header from "molecules/Header";
 
 const Creatives: FC = () => {
   return (
-    <Grid container style={{ marginTop: 16, marginBottom: 16 }} spacing={3}>
-      <CreativeList />
-      <CreativeDetail />
-    </Grid>
+    <Container maxWidth="md">
+      <Header />
+      <Grid container spacing={3} marginTop="16px" marginBottom="16px">
+        <Outlet />
+      </Grid>
+    </Container>
   );
 };
 

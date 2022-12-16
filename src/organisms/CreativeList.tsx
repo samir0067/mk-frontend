@@ -1,12 +1,12 @@
 import React, { FC } from "react";
-import { Avatar, Chip, Grid, List, ListItem, ListItemText, Pagination, Paper, Switch, Typography } from "@mui/material";
+import { Avatar, Chip, Grid, List, ListItem, ListItemText, Paper, Switch, Typography } from "@mui/material";
 import { creatives } from "utils/dataMock";
+import { Pagination } from "molecules/Pagination";
 
 const CreativeList: FC = () => {
   return (
     <>
-      <Grid item xs={2} />
-      <Grid item xs={8}>
+      <Grid item xs={12}>
         <Paper style={{ padding: 16 }} elevation={8}>
           <List>
             {creatives.map((creative, index) => (
@@ -50,13 +50,7 @@ const CreativeList: FC = () => {
           </List>
         </Paper>
       </Grid>
-      <Grid item xs={12}>
-        <Grid container justifyContent="center">
-          <Grid item>
-            <Pagination count={10} />
-          </Grid>
-        </Grid>
-      </Grid>
+      <Pagination />
     </>
   );
 };
