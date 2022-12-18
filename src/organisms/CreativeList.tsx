@@ -6,25 +6,20 @@ import { Pagination } from "molecules/Pagination";
 const CreativeList: FC = () => {
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs bgcolor="indianred">
         <Paper style={{ padding: 16 }} elevation={8}>
           <List>
             {creatives.map((creative, index) => (
               <ListItem
                 key={index}
-                secondaryAction={<Switch checked={creative.enabled} />}
+                secondaryAction={<Switch checked={creative.enabled} onChange={() => !creative.enabled} />}
                 divider={index < creatives.length - 1}
               >
                 <ListItemText
                   primary={
                     <Grid container spacing={1}>
                       <Grid item xs={3}>
-                        <Typography
-                          variant="h6"
-                          style={{
-                            ...(index === 1 ? { fontWeight: "bold" } : {}),
-                          }}
-                        >
+                        <Typography variant="h6" style={{ ...(index === 1 ? { fontWeight: "bold" } : {}) }}>
                           {creative.title}
                         </Typography>
                       </Grid>

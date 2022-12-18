@@ -5,50 +5,44 @@ import { Add } from "@mui/icons-material";
 
 const CreativeForm: FC = () => {
   return (
-    <>
-      <Grid item xs={3} />
-      <Grid item xs={6}>
-        <Paper elevation={8} style={{ padding: 16 }}>
-          <Grid container alignItems="center">
-            <Grid item xs={8}>
-              <TextField margin="normal" label="Titre" value={creatives[1].title} />
-            </Grid>
-            <Grid item xs container justifyContent="flex-end">
-              <Grid item>
-                <Switch checked />
-              </Grid>
-            </Grid>
+    <Grid item xs={12}>
+      <Paper elevation={8} style={{ padding: 16 }}>
+        <Grid container alignItems="center">
+          <Grid item xs>
+            <TextField fullWidth margin="normal" label="Titre" value={creatives[1].title} />
           </Grid>
-
-          <TextField
-            margin="normal"
-            fullWidth
-            multiline
-            minRows={3}
-            label="Description"
-            value={creatives[1].description}
-          />
-
-          <TextField margin="normal" fullWidth multiline minRows={10} label="Contenu" value={creatives[1].content} />
-
-          <Grid container spacing={2} alignItems="center">
-            {creatives[1].formats.map((format) => (
-              <Grid item>
-                <Chip label={format} color="primary" />
-              </Grid>
-            ))}
+          <Grid item xs display="flex" justifyContent="end">
             <Grid item>
-              <IconButton size="small" color="primary">
-                <Add />
-              </IconButton>
+              <Switch checked />
             </Grid>
           </Grid>
-        </Paper>
-      </Grid>
-      <Grid item xs={3} />
+        </Grid>
 
-      <Grid item xs={3} />
-      <Grid item xs={6} container spacing={3} justifyContent="center">
+        <TextField
+          margin="normal"
+          fullWidth
+          multiline
+          minRows={3}
+          label="Description"
+          value={creatives[1].description}
+        />
+
+        <TextField margin="normal" fullWidth multiline minRows={10} label="Contenu" value={creatives[1].content} />
+
+        <Grid container spacing={2} alignItems="center">
+          {creatives[1].formats.map((format) => (
+            <Grid item>
+              <Chip label={format} color="primary" />
+            </Grid>
+          ))}
+          <Grid item>
+            <IconButton size="small" color="primary">
+              <Add />
+            </IconButton>
+          </Grid>
+        </Grid>
+      </Paper>
+      <Grid container xs={12} spacing={3} marginTop="auto" justifyContent="center">
         <Grid item>
           <Button color="primary" variant="contained">
             Sauvegarder
@@ -61,7 +55,7 @@ const CreativeForm: FC = () => {
           <Button variant="outlined">Supprimer</Button>
         </Grid>
       </Grid>
-    </>
+    </Grid>
   );
 };
 
