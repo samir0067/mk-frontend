@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Avatar, Chip, Grid, List, ListItem, ListItemText, Paper, Switch, Typography } from "@mui/material";
 import { Pagination } from "molecules/Pagination";
 import { Contributor, Creative, Format } from "utils/types";
@@ -9,11 +9,13 @@ import { DisplayHandling } from "organisms/DisplayHandling";
 
 const CreativeList: FC = () => {
   const [idSelected, setIdSelected] = useState<string>("");
+  const [pages, setPages] = useState<number>(1);
 
-  const { isLoading, isError, data: creatives } = useQuery(["creatives"], () => getCreatives(1, 5));
+  const { isLoading, isError, data: creatives } = useQuery(["creatives", pages], () => getCreatives(pages, 5));
 
-  // console.log("creatives =>", creatives);
-  console.log("idSelected =>", idSelected);
+  useEffect(() => {
+    setIdSelected("");
+  }, [pages]);
 
   const handleAvatar = (contributor: Contributor) => {
     const initial = contributor.firstName.charAt(0).concat(contributor.lastName.charAt(0));
@@ -34,10 +36,12 @@ const CreativeList: FC = () => {
             {creatives.map((creative: Creative, index: number) => (
               <ListItem
                 key={index}
+                // TODO fixed the button activate or inactivate
                 secondaryAction={<Switch checked={creative.enabled} onChange={() => !creative.enabled} />}
                 divider={index < creatives.length - 1}
               >
                 <ListItemText
+                  // TODO fixed the display the details of creative element
                   onClick={() => setIdSelected(creative.id)}
                   primary={
                     <Grid container spacing={1} sx={{ cursor: "pointer" }}>
@@ -68,7 +72,7 @@ const CreativeList: FC = () => {
           </List>
         </Paper>
       }
-      footer={<Pagination />}
+      footer={<Pagination pages={pages} onChange={(event, page: number) => setPages(page)} />}
     />
   );
 };
