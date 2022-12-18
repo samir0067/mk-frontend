@@ -1,40 +1,63 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { Avatar, Chip, Grid, List, ListItem, ListItemText, Paper, Switch, Typography } from "@mui/material";
-import { creatives } from "utils/dataMock";
 import { Pagination } from "molecules/Pagination";
+import { Contributor, Creative, Format } from "utils/types";
+import { CreativeWrapper } from "templates/CreativeWrapper";
+import { useQuery } from "react-query";
+import { getCreatives } from "services/creativeApi";
+import { DisplayHandling } from "organisms/DisplayHandling";
 
 const CreativeList: FC = () => {
+  const [idSelected, setIdSelected] = useState<string>("");
+
+  const { isLoading, isError, data: creatives } = useQuery(["creatives"], () => getCreatives(1, 5));
+
+  // console.log("creatives =>", creatives);
+  console.log("idSelected =>", idSelected);
+
+  const handleAvatar = (contributor: Contributor) => {
+    const initial = contributor.firstName.charAt(0).concat(contributor.lastName.charAt(0));
+    return <Typography>{initial}</Typography>;
+  };
+
+  if (isLoading) {
+    return <DisplayHandling isLoading />;
+  } else if (isError) {
+    return <DisplayHandling isError />;
+  }
+
   return (
-    <>
-      <Grid item xs bgcolor="indianred">
+    <CreativeWrapper
+      main={
         <Paper style={{ padding: 16 }} elevation={8}>
           <List>
-            {creatives.map((creative, index) => (
+            {creatives.map((creative: Creative, index: number) => (
               <ListItem
                 key={index}
                 secondaryAction={<Switch checked={creative.enabled} onChange={() => !creative.enabled} />}
                 divider={index < creatives.length - 1}
               >
                 <ListItemText
+                  onClick={() => setIdSelected(creative.id)}
                   primary={
-                    <Grid container spacing={1}>
+                    <Grid container spacing={1} sx={{ cursor: "pointer" }}>
                       <Grid item xs={3}>
-                        <Typography variant="h6" style={{ ...(index === 1 ? { fontWeight: "bold" } : {}) }}>
+                        <Typography variant="h6" sx={{ ...(idSelected === creative.id && { fontWeight: "bold" }) }}>
                           {creative.title}
                         </Typography>
                       </Grid>
                       <Grid item xs={3}>
                         <div style={{ display: "flex" }}>
-                          {creative.users.map((user) => (
-                            <Avatar key={user} style={{ marginLeft: -16 }}>
-                              {user}
+                          {creative.contributors.map((contributor: Contributor, index: number) => (
+                            <Avatar key={index} style={{ marginLeft: -16 }}>
+                              {handleAvatar(contributor)}
                             </Avatar>
                           ))}
                         </div>
                       </Grid>
                       <Grid item xs={6}>
-                        {creative.formats.map((format) => (
-                          <Chip style={{ marginRight: 8 }} key={format} label={format} />
+                        {creative.formats.map((format: Format, index: number) => (
+                          <Chip style={{ marginRight: 8 }} key={index} label={format.width + "x" + format.height} />
                         ))}
                       </Grid>
                     </Grid>
@@ -44,9 +67,9 @@ const CreativeList: FC = () => {
             ))}
           </List>
         </Paper>
-      </Grid>
-      <Pagination />
-    </>
+      }
+      footer={<Pagination />}
+    />
   );
 };
 

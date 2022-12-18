@@ -5,7 +5,6 @@ import { Header } from "molecules/Header";
 const NotFound: FC = () => {
   return (
     <Box
-      component="div"
       height="100vh"
       display="flex"
       flexDirection="column"
