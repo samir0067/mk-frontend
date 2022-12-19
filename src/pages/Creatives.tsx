@@ -25,12 +25,12 @@ const Creatives: FC = () => {
         <Paper style={{ padding: 16 }} elevation={8}>
           <List>
             {creatives.map((creative: Creative, index: number) => (
-              <CreativeList key={index} creatives={creatives} creative={creative} index={index} pages={pages} />
+              <CreativeList key={index} creatives={creatives} creative={creative} index={index} />
             ))}
           </List>
         </Paper>
       }
-      footer={<Pagination pages={pages} onChange={(event, page: number) => setPages(page)} />}
+      footer={<Pagination count={10} pages={pages} onChange={(event, page: number) => setPages(page)} />}
     />
   );
 };

@@ -10,8 +10,8 @@ const App: FC = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Creatives />} />
-        <Route path="/creatives/:id" element={<CreativeDetail />} />
-        <Route path="/creatives/form" element={<CreativeForm />} />
+        <Route path="/creative/:id" element={<CreativeDetail />} />
+        <Route path="/creative/:id/edit" element={<CreativeForm />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
