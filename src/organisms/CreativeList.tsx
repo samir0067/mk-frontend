@@ -4,6 +4,8 @@ import { Grid, ListItem, ListItemText, Switch } from "@mui/material";
 import { GetContributors } from "molecules/GetContributors";
 import { GetFormats } from "molecules/GetFormats";
 import { GetTitle } from "molecules/GetTitle";
+import { updateCreative } from "services/creativeApi";
+import { useMutation } from "react-query";
 
 type CreativeListProps = {
   creatives: Creative[];
@@ -19,10 +21,17 @@ const CreativeList: FC<CreativeListProps> = ({ creative, index, creatives, pages
     setIdSelected("");
   }, [pages]);
 
+  const mutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative));
+
+  const handleSwitch = () => {
+    const switchedCreative = creative;
+    switchedCreative.enabled = !creative.enabled;
+    mutation.mutate(switchedCreative);
+  };
+
   return (
     <ListItem
-      // TODO fixed the button activate or inactivate
-      secondaryAction={<Switch checked={creative.enabled} onChange={() => !creative.enabled} />}
+      secondaryAction={<Switch checked={creative.enabled} onChange={handleSwitch} />}
       divider={index < creatives.length - 1}
     >
       <ListItemText
