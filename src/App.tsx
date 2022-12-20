@@ -1,23 +1,20 @@
 import React, { FC } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import NotFound from "pages/NotFound";
-import Creatives from "organisms/Creatives";
-import Header from "molecules/Header";
-import CreativeForm from "organisms/CreativeForm";
+import Creatives from "pages/Creatives";
+import CreativeDetail from "pages/CreativeDetail";
+import CreativeForm from "pages/CreativeForm";
 
 const App: FC = () => {
   return (
-    <>
-      <Header />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Creatives />} />
-          <Route path="/creatives" element={<CreativeForm />} />
-          {/*<Route path="/creatives/:id" element={<CreativeForm />} />*/}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Creatives />} />
+        <Route path="/creative/:id" element={<CreativeDetail />} />
+        <Route path="/creative/:id/edit" element={<CreativeForm />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 };
 
