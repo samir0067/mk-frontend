@@ -6,32 +6,41 @@ import { useNavigate, useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { deleteCreative, getCreative, updateCreative } from "services/creativeApi";
 import { DisplayHandling } from "organisms/DisplayHandling";
-import { Creative } from "utils/types";
+import { Creative, Format } from "utils/types";
 import { Button } from "atoms/Button";
 import { GetFormats } from "molecules/GetFormats";
+import AnchorDrawer from "organisms/AnchorDrawer";
 
 const CreativeForm: FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [localState, setLocalState] = useState<Creative>({} as Creative);
+  const [open, setOpen] = useState<boolean>(false);
+  const [format, setFormat] = useState<Format>({} as Format);
 
   const { isLoading, isError, data: creative } = useQuery(["creative"], () => getCreative(id));
-  console.log("creative ==>", creative?.data);
 
   const updateMutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative, id), {
     onSuccess: () => {
-      queryClient.invalidateQueries("creative").then(() => navigate("/"));
+      return queryClient.invalidateQueries("creative").then(() => navigate("/"));
     },
   });
 
-  const updateSwitchMutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative, id), {
+  const handleMutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative, id), {
     onSuccess: () => {
       queryClient.invalidateQueries("creative").then(() => console.log("Invalidates cache and re fetch"));
     },
   });
 
   const deleteMutation = useMutation(() => deleteCreative(id).then(() => navigate("/")));
+
+  const addFormat = () => {
+    const formatted = creative?.data.formats.concat(format);
+    if (format) handleMutation.mutate({ ...localState, formats: [...formatted] });
+    setOpen(false);
+    setFormat({} as Format);
+  };
 
   const handleSubmit = () => {
     if (localState) updateMutation.mutate(localState);
@@ -47,51 +56,81 @@ const CreativeForm: FC = () => {
   return (
     <CreativeWrapper
       main={
-        <Paper elevation={8} style={{ padding: 16 }}>
-          <Grid container alignItems="center">
-            <Grid item xs>
-              <TextField
-                fullWidth
-                margin="normal"
-                label="Titre"
-                defaultValue={creative?.data.title}
-                onChange={(e) => setLocalState({ ...localState, title: e.target.value })}
-              />
+        <>
+          <Paper elevation={8} style={{ padding: 16 }}>
+            <Grid container alignItems="center">
+              <Grid item xs>
+                <TextField
+                  fullWidth
+                  margin="normal"
+                  label="Titre"
+                  defaultValue={creative?.data.title}
+                  onChange={(e) => setLocalState({ ...localState, title: e.target.value })}
+                />
+              </Grid>
+              <Grid item xs display="flex" justifyContent="end">
+                <Switch
+                  checked={creative?.data.enabled}
+                  onChange={() => handleMutation.mutate({ ...creative?.data, enabled: !creative?.data.enabled })}
+                />
+              </Grid>
             </Grid>
-            <Grid item xs display="flex" justifyContent="end">
-              <Switch
-                checked={creative?.data.enabled}
-                onChange={() => updateSwitchMutation.mutate({ ...creative?.data, enabled: !creative?.data.enabled })}
-              />
+            <TextField
+              margin="normal"
+              fullWidth
+              multiline
+              minRows={3}
+              label="Description"
+              defaultValue={creative?.data.description}
+              onChange={(e) => setLocalState({ ...localState, description: e.target.value })}
+            />
+            <TextField
+              margin="normal"
+              fullWidth
+              multiline
+              minRows={10}
+              label="Contenu"
+              defaultValue={creative?.data.content}
+              onChange={(e) => setLocalState({ ...localState, content: e.target.value })}
+            />
+            <Grid container spacing={2} alignItems="center">
+              <GetFormats creative={creative?.data} xsGrid={false} marginRightCip={0.2} colorChip="primary" />
+              <Grid item>
+                <IconButton size="small" color="primary" onClick={() => setOpen(true)}>
+                  <Add />
+                </IconButton>
+              </Grid>
             </Grid>
-          </Grid>
-          <TextField
-            margin="normal"
-            fullWidth
-            multiline
-            minRows={3}
-            label="Description"
-            defaultValue={creative?.data.description}
-            onChange={(e) => setLocalState({ ...localState, description: e.target.value })}
+          </Paper>
+          <AnchorDrawer
+            open={open}
+            onOpen={() => setOpen(true)}
+            onClose={() => setOpen(false)}
+            element={
+              <Grid container paddingY={8}>
+                <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
+                  <TextField
+                    margin="normal"
+                    label="largeur"
+                    type="number"
+                    defaultValue={format.width}
+                    onChange={(e) => setFormat({ ...format, width: parseInt(e.target.value) })}
+                  />
+                  <TextField
+                    margin="normal"
+                    label="hauteur"
+                    type="number"
+                    defaultValue={format.height}
+                    onChange={(e) => setFormat({ ...format, height: parseInt(e.target.value) })}
+                  />
+                </Grid>
+                <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
+                  <Button label="Ajouter" onClick={addFormat} />
+                </Grid>
+              </Grid>
+            }
           />
-          <TextField
-            margin="normal"
-            fullWidth
-            multiline
-            minRows={10}
-            label="Contenu"
-            defaultValue={creative?.data.content}
-            onChange={(e) => setLocalState({ ...localState, content: e.target.value })}
-          />
-          <Grid container spacing={2} alignItems="center">
-            <GetFormats creative={creative?.data} xsGrid={false} marginRightCip={0.2} colorChip="primary" />
-            <Grid item>
-              <IconButton size="small" color="primary">
-                <Add />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </Paper>
+        </>
       }
       footer={
         <Grid container item xs={12} spacing={3} marginTop="auto" justifyContent="center">
