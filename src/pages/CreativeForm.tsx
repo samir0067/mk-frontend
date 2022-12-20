@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Grid, IconButton, Paper, Switch, TextField } from "@mui/material";
+import { Grid, IconButton, Paper, Switch, TextField, Typography } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { CreativeWrapper } from "templates/CreativeWrapper";
 import { useNavigate, useParams } from "react-router";
@@ -10,6 +10,9 @@ import { Creative, Format } from "utils/types";
 import { Button } from "atoms/Button";
 import { GetFormats } from "molecules/GetFormats";
 import AnchorDrawer from "organisms/AnchorDrawer";
+import { useForm } from "react-hook-form";
+import { formatSchema } from "utils/validation";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const CreativeForm: FC = () => {
   const { id } = useParams();
@@ -42,10 +45,18 @@ const CreativeForm: FC = () => {
     setFormat({} as Format);
   };
 
-  const handleSubmit = () => {
+  const submitUpdate = () => {
     if (localState) updateMutation.mutate(localState);
     setLocalState({} as Creative);
   };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Format>({
+    resolver: yupResolver(formatSchema),
+  });
 
   if (isLoading) {
     return <DisplayHandling isLoading />;
@@ -108,24 +119,38 @@ const CreativeForm: FC = () => {
             onClose={() => setOpen(false)}
             element={
               <Grid container paddingY={8}>
-                <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
+                <Grid item xs display="flex" flexDirection="column" justifyContent="start" alignItems="end">
                   <TextField
+                    {...register("width")}
+                    id="width"
                     margin="normal"
                     label="largeur"
                     type="number"
-                    defaultValue={format.width}
                     onChange={(e) => setFormat({ ...format, width: parseInt(e.target.value) })}
                   />
+                  {errors["width"] && (
+                    <Typography variant="caption" color="darkred">
+                      {errors["width"]?.message as never}
+                    </Typography>
+                  )}
+                </Grid>
+                <Grid item xs display="flex" flexDirection="column" justifyContent="start" alignItems="start">
                   <TextField
+                    {...register("height")}
+                    id="height"
                     margin="normal"
                     label="hauteur"
                     type="number"
-                    defaultValue={format.height}
                     onChange={(e) => setFormat({ ...format, height: parseInt(e.target.value) })}
                   />
+                  {errors["height"] && (
+                    <Typography variant="caption" color="darkred">
+                      {errors["height"]?.message as never}
+                    </Typography>
+                  )}
                 </Grid>
                 <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
-                  <Button label="Ajouter" onClick={addFormat} />
+                  <Button label="Ajouter" onClick={handleSubmit(addFormat)} />
                 </Grid>
               </Grid>
             }
@@ -134,7 +159,7 @@ const CreativeForm: FC = () => {
       }
       footer={
         <Grid container item xs={12} spacing={3} marginTop="auto" justifyContent="center">
-          <Button label="Sauvegarder" onClick={handleSubmit} />
+          <Button label="Sauvegarder" onClick={submitUpdate} />
           <Button label="Annuler" variant="outlined" onClick={() => navigate(-1)} />
           <Button label="Supprimer" color="error" variant="outlined" onClick={() => deleteMutation.mutate()} />
         </Grid>
