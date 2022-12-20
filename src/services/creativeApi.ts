@@ -10,15 +10,15 @@ export const getCreatives = async (pages: number, limits: number) => {
   return response.data;
 };
 
-export const addCreative = async (creative: Creative) => {
-  return await creativeApi.post("/creatives", creative);
+export const getCreative = async (id?: string) => {
+  return await creativeApi.get(`/creatives/${id}`);
 };
 
-export const updateCreative = async (creative: Creative) => {
-  return await creativeApi.put(`/creatives/${creative.id}`, creative);
+export const updateCreative = async (creative: Creative, id?: string) => {
+  return await creativeApi.patch(`/creatives/${id}`, creative);
 };
 
-export const deleteCreative = async ({ id }: Creative) => {
+export const deleteCreative = async (id?: string) => {
   return await creativeApi.delete(`/creatives/${id}`);
 };
 

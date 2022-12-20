@@ -19,17 +19,14 @@ const CreativeList: FC<CreativeListProps> = ({ creative, index, creatives }) => 
   const queryClient = useQueryClient();
   const [idSelected, setIdSelected] = useState<string>("");
 
-  const updateSwitchMutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative), {
-    onSuccess: () => {
-      queryClient.invalidateQueries("creatives").then(() => console.log("Invalidates cache and re fetch"));
+  const updateSwitchMutation = useMutation(
+    (updatedCreative: Creative) => updateCreative(updatedCreative, creative.id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("creatives").then(() => console.log("Invalidates cache and re fetch"));
+      },
     },
-  });
-
-  const handleSwitch = () => {
-    const switchedCreative = creative;
-    switchedCreative.enabled = !creative.enabled;
-    updateSwitchMutation.mutate(switchedCreative);
-  };
+  );
 
   const handleIdSelected = () => {
     setIdSelected(creative.id);
@@ -38,7 +35,12 @@ const CreativeList: FC<CreativeListProps> = ({ creative, index, creatives }) => 
 
   return (
     <ListItem
-      secondaryAction={<Switch checked={creative.enabled} onChange={handleSwitch} />}
+      secondaryAction={
+        <Switch
+          checked={creative.enabled}
+          onChange={() => updateSwitchMutation.mutate({ ...creative, enabled: !creative.enabled })}
+        />
+      }
       divider={index < creatives.length - 1}
     >
       <ListItemText

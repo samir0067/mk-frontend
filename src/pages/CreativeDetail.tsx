@@ -1,13 +1,14 @@
 import React, { FC } from "react";
 import { Grid, List, Paper, Typography } from "@mui/material";
 import { CreativeWrapper } from "templates/CreativeWrapper";
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { ContributorListItem } from "molecules/ContributorListItem";
 import { Contributor } from "utils/types";
-import { ButtonContainer } from "molecules/ButtonContainer";
+import { Button } from "atoms/Button";
 
 const CreativeDetail: FC = () => {
   const { state } = useLocation();
+  const navigate = useNavigate();
 
   return (
     <CreativeWrapper
@@ -41,7 +42,12 @@ const CreativeDetail: FC = () => {
           </Grid>
         </Paper>
       }
-      footer={<ButtonContainer id={state.id} forDetail />}
+      footer={
+        <Grid container item xs={12} spacing={3} marginTop="auto" justifyContent="center">
+          <Button label="Modifier" onClick={() => navigate(`/creative/${state.id}/edit`, { state: state })} />
+          <Button label="Retour" variant="outlined" onClick={() => navigate(-1)} />
+        </Grid>
+      }
     />
   );
 };

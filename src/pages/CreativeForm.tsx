@@ -1,0 +1,107 @@
+import React, { FC, useState } from "react";
+import { Grid, IconButton, Paper, Switch, TextField } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { CreativeWrapper } from "templates/CreativeWrapper";
+import { useNavigate, useParams } from "react-router";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { deleteCreative, getCreative, updateCreative } from "services/creativeApi";
+import { DisplayHandling } from "organisms/DisplayHandling";
+import { Creative } from "utils/types";
+import { Button } from "atoms/Button";
+import { GetFormats } from "molecules/GetFormats";
+
+const CreativeForm: FC = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [localState, setLocalState] = useState<Creative>({} as Creative);
+
+  const { isLoading, isError, data: creative } = useQuery(["creative"], () => getCreative(id));
+  console.log("creative ==>", creative?.data);
+
+  const updateMutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative, id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("creative").then(() => navigate("/"));
+    },
+  });
+
+  const updateSwitchMutation = useMutation((updatedCreative: Creative) => updateCreative(updatedCreative, id), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("creative").then(() => console.log("Invalidates cache and re fetch"));
+    },
+  });
+
+  const deleteMutation = useMutation(() => deleteCreative(id).then(() => navigate("/")));
+
+  const handleSubmit = () => {
+    if (localState) updateMutation.mutate(localState);
+    setLocalState({} as Creative);
+  };
+
+  if (isLoading) {
+    return <DisplayHandling isLoading />;
+  } else if (isError) {
+    return <DisplayHandling isError />;
+  }
+
+  return (
+    <CreativeWrapper
+      main={
+        <Paper elevation={8} style={{ padding: 16 }}>
+          <Grid container alignItems="center">
+            <Grid item xs>
+              <TextField
+                fullWidth
+                margin="normal"
+                label="Titre"
+                defaultValue={creative?.data.title}
+                onChange={(e) => setLocalState({ ...localState, title: e.target.value })}
+              />
+            </Grid>
+            <Grid item xs display="flex" justifyContent="end">
+              <Switch
+                checked={creative?.data.enabled}
+                onChange={() => updateSwitchMutation.mutate({ ...creative?.data, enabled: !creative?.data.enabled })}
+              />
+            </Grid>
+          </Grid>
+          <TextField
+            margin="normal"
+            fullWidth
+            multiline
+            minRows={3}
+            label="Description"
+            defaultValue={creative?.data.description}
+            onChange={(e) => setLocalState({ ...localState, description: e.target.value })}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            multiline
+            minRows={10}
+            label="Contenu"
+            defaultValue={creative?.data.content}
+            onChange={(e) => setLocalState({ ...localState, content: e.target.value })}
+          />
+          <Grid container spacing={2} alignItems="center">
+            <GetFormats creative={creative?.data} xsGrid={false} marginRightCip={0.2} colorChip="primary" />
+            <Grid item>
+              <IconButton size="small" color="primary">
+                <Add />
+              </IconButton>
+            </Grid>
+          </Grid>
+        </Paper>
+      }
+      footer={
+        <Grid container item xs={12} spacing={3} marginTop="auto" justifyContent="center">
+          <Button label="Sauvegarder" onClick={handleSubmit} />
+          <Button label="Annuler" variant="outlined" onClick={() => navigate(-1)} />
+          <Button label="Supprimer" color="error" variant="outlined" onClick={() => deleteMutation.mutate()} />
+        </Grid>
+      }
+    />
+  );
+};
+
+export default CreativeForm;
