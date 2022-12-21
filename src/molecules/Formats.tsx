@@ -9,7 +9,7 @@ type GetFormatsProps = {
   colorChip?: "error" | "default" | "primary" | "secondary" | "info" | "success" | "warning";
 };
 
-export const GetFormats: FC<GetFormatsProps> = ({ creative, xsGrid, marginRightCip, colorChip }) => {
+export const Formats: FC<GetFormatsProps> = ({ creative, xsGrid, marginRightCip, colorChip }) => {
   return (
     <Grid item xs={xsGrid}>
       {creative.formats.map((format: Format, index: number) => (
@@ -24,7 +24,7 @@ export const GetFormats: FC<GetFormatsProps> = ({ creative, xsGrid, marginRightC
   );
 };
 
-GetFormats.defaultProps = {
+Formats.defaultProps = {
   colorChip: "default",
   xsGrid: 6,
   marginRightCip: 8,

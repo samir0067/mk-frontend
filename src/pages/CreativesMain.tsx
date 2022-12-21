@@ -9,7 +9,7 @@ import { DisplayHandling } from "organisms/DisplayHandling";
 import CreativeList from "organisms/CreativeList";
 import CreativeDetail from "organisms/CreativeDetail";
 
-const Creatives: FC = () => {
+const CreativesMain: FC = () => {
   const [pages, setPages] = useState<number>(1);
   const [idFocused, setIdFocused] = useState<string>("");
 
@@ -26,7 +26,7 @@ const Creatives: FC = () => {
   }
 
   return (
-    <>
+    <div data-testid="creatives-id">
       <CreativeWrapper
         main={
           <Paper style={{ padding: 16 }} elevation={8}>
@@ -47,8 +47,8 @@ const Creatives: FC = () => {
         footer={<Pagination count={10} pages={pages} onChange={(event, page: number) => setPages(page)} />}
       />
       {idFocused && <CreativeDetail idFocused={idFocused} />}
-    </>
+    </div>
   );
 };
 
-export default Creatives;
+export default CreativesMain;

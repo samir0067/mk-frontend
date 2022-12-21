@@ -77,10 +77,7 @@ const CreativeDetail: FC<CreativeDetailProps> = ({ idFocused }) => {
       }
       footer={
         <Grid container item xs={12} justifyContent="center">
-          <Button
-            label="Modifier"
-            onClick={() => navigate(`/creative/${creative?.data.id}/edit`, { state: creative })}
-          />
+          <Button label="Modifier" onClick={() => navigate(`/creative/${creative?.data.id}/edit`)} />
         </Grid>
       }
     />

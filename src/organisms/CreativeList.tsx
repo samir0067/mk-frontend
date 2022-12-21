@@ -1,9 +1,9 @@
 import React, { FC } from "react";
 import { Creative } from "utils/types";
 import { Grid, ListItem, ListItemText, Switch } from "@mui/material";
-import { GetContributors } from "molecules/GetContributors";
-import { GetFormats } from "molecules/GetFormats";
-import { GetTitle } from "molecules/GetTitle";
+import { Contributors } from "molecules/Contributors";
+import { Formats } from "molecules/Formats";
+import { Title } from "molecules/Title";
 import { updateCreative } from "services/creativeApi";
 import { useMutation, useQueryClient } from "react-query";
 
@@ -45,9 +45,9 @@ const CreativeList: FC<CreativeListProps> = ({ creative, index, creatives, idFoc
         onClick={handleIdFocused}
         primary={
           <Grid container spacing={1} sx={{ cursor: "pointer" }}>
-            <GetTitle idFocused={idFocused} id={creative.id} primary={creative.title} />
-            <GetContributors creative={creative} />
-            <GetFormats creative={creative} />
+            <Title idFocused={idFocused} id={creative.id} primary={creative.title} />
+            <Contributors creative={creative} />
+            <Formats creative={creative} />
           </Grid>
         }
       />

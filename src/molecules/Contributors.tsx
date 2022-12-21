@@ -6,7 +6,7 @@ type GetContributorsProps = {
   creative: Creative;
 };
 
-export const GetContributors: FC<GetContributorsProps> = ({ creative }) => {
+export const Contributors: FC<GetContributorsProps> = ({ creative }) => {
   const handleAvatar = (contributor: Contributor) => {
     const initial = contributor.firstName.charAt(0).concat(contributor.lastName.charAt(0));
     return <Typography>{initial}</Typography>;
