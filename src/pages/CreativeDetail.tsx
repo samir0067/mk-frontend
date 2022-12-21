@@ -12,6 +12,7 @@ const CreativeDetail: FC = () => {
 
   return (
     <CreativeWrapper
+      displayHeader={true}
       main={
         <Paper style={{ padding: 16 }} elevation={8}>
           <Grid container spacing={3}>

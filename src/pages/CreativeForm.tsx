@@ -66,6 +66,7 @@ const CreativeForm: FC = () => {
 
   return (
     <CreativeWrapper
+      displayHeader={true}
       main={
         <>
           <Paper elevation={8} style={{ padding: 16 }}>
