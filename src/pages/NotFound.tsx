@@ -1,6 +1,5 @@
 import React, { FC } from "react";
 import { Box, Typography } from "@mui/material";
-import { Header } from "molecules/Header";
 import { Button } from "atoms/Button";
 import { useNavigate } from "react-router";
 
@@ -15,7 +14,6 @@ const NotFound: FC = () => {
       alignItems="center"
       bgcolor="black"
     >
-      <Header />
       <Typography variant="h1" color="white">
         404
       </Typography>
