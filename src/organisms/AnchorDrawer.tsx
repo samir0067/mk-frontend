@@ -53,7 +53,7 @@ const AnchorDrawer: FC<AnchorDrawerProps> = ({ open, id, creative, localState, o
           type="number"
           onChange={(e) => setFormat({ ...format, width: parseInt(e.target.value) })}
           errors={errors}
-          register={register("width")}
+          register={register("height")}
         />
         <InputField
           id="width"
@@ -61,7 +61,7 @@ const AnchorDrawer: FC<AnchorDrawerProps> = ({ open, id, creative, localState, o
           type="number"
           onChange={(e) => setFormat({ ...format, height: parseInt(e.target.value) })}
           errors={errors}
-          register={register("height")}
+          register={register("width")}
         />
         <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
           <Button label="Ajouter" onClick={handleSubmit(addFormat)} />
