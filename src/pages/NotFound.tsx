@@ -7,6 +7,7 @@ const NotFound: FC = () => {
   const navigate = useNavigate();
   return (
     <Box
+      data-testid="notFound-id"
       height="100vh"
       display="flex"
       flexDirection="column"
