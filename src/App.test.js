@@ -1,8 +1,14 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import NotFound from "./pages/NotFound";
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+test("devrait afficher la page non trouvée", async () => {
+  render(
+    <BrowserRouter>
+      <NotFound />
+    </BrowserRouter>,
+  );
+
+  const content = await waitFor(() => screen.findByTestId("notFound-id"));
+  expect(content).toBeTruthy();
 });

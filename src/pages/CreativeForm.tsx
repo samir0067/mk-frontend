@@ -1,18 +1,20 @@
 import React, { FC, useState } from "react";
-import { Grid, IconButton, Paper, Switch, TextField, Typography } from "@mui/material";
+import { Grid, Paper, Switch } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { CreativeWrapper } from "templates/CreativeWrapper";
 import { useNavigate, useParams } from "react-router";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { deleteCreative, getCreative, updateCreative } from "services/creativeApi";
 import { DisplayHandling } from "organisms/DisplayHandling";
-import { Creative, Format } from "utils/types";
+import { Creative } from "utils/types";
 import { Button } from "atoms/Button";
-import { GetFormats } from "molecules/GetFormats";
+import { Formats } from "molecules/Formats";
 import AnchorDrawer from "organisms/AnchorDrawer";
+import { IconButton } from "atoms/IconButton";
 import { useForm } from "react-hook-form";
-import { formatSchema } from "utils/validation";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { yupResolver } from "@hookform/resolvers/yup/dist/yup";
+import { creativeSchema } from "utils/validation";
+import { InputField } from "molecules/InputField";
 
 const CreativeForm: FC = () => {
   const { id } = useParams();
@@ -20,7 +22,6 @@ const CreativeForm: FC = () => {
   const queryClient = useQueryClient();
   const [localState, setLocalState] = useState<Creative>({} as Creative);
   const [open, setOpen] = useState<boolean>(false);
-  const [format, setFormat] = useState<Format>({} as Format);
 
   const { isLoading, isError, data: creative } = useQuery(["creative"], () => getCreative(id));
 
@@ -38,13 +39,6 @@ const CreativeForm: FC = () => {
 
   const deleteMutation = useMutation(() => deleteCreative(id).then(() => navigate("/")));
 
-  const addFormat = () => {
-    const formatted = creative?.data.formats.concat(format);
-    if (format) handleMutation.mutate({ ...localState, formats: [...formatted] });
-    setOpen(false);
-    setFormat({} as Format);
-  };
-
   const submitUpdate = () => {
     if (localState) updateMutation.mutate(localState);
     setLocalState({} as Creative);
@@ -54,8 +48,8 @@ const CreativeForm: FC = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<Format>({
-    resolver: yupResolver(formatSchema),
+  } = useForm({
+    resolver: yupResolver(creativeSchema),
   });
 
   if (isLoading) {
@@ -71,12 +65,15 @@ const CreativeForm: FC = () => {
           <Paper elevation={8} style={{ padding: 16 }}>
             <Grid container alignItems="center">
               <Grid item xs>
-                <TextField
-                  fullWidth
-                  margin="normal"
+                <InputField
+                  id="title"
                   label="Titre"
-                  defaultValue={creative?.data.title}
+                  type="text"
                   onChange={(e) => setLocalState({ ...localState, title: e.target.value })}
+                  errors={errors}
+                  register={register("title")}
+                  defaultValue={creative?.data.title}
+                  isFullWidth={true}
                 />
               </Grid>
               <Grid item xs display="flex" justifyContent="end">
@@ -86,80 +83,49 @@ const CreativeForm: FC = () => {
                 />
               </Grid>
             </Grid>
-            <TextField
-              margin="normal"
-              fullWidth
-              multiline
-              minRows={3}
+
+            <InputField
+              id="description"
               label="Description"
-              defaultValue={creative?.data.description}
+              type="text"
               onChange={(e) => setLocalState({ ...localState, description: e.target.value })}
+              errors={errors}
+              register={register("description")}
+              defaultValue={creative?.data.description}
+              isFullWidth
+              isMultiline
+              minRows={3}
             />
-            <TextField
-              margin="normal"
-              fullWidth
-              multiline
-              minRows={10}
+            <InputField
+              id="content"
               label="Contenu"
-              defaultValue={creative?.data.content}
+              type="text"
               onChange={(e) => setLocalState({ ...localState, content: e.target.value })}
+              errors={errors}
+              register={register("content")}
+              defaultValue={creative?.data.content}
+              isFullWidth
+              isMultiline
+              minRows={10}
             />
             <Grid container spacing={2} alignItems="center">
-              <GetFormats creative={creative?.data} xsGrid={false} marginRightCip={0.2} colorChip="primary" />
-              <Grid item>
-                <IconButton size="small" color="primary" onClick={() => setOpen(true)}>
-                  <Add />
-                </IconButton>
-              </Grid>
+              <Formats creative={creative?.data} xsGrid={false} marginRightCip={0.2} colorChip="primary" />
+              <IconButton label={<Add />} onClick={() => setOpen(true)} />
             </Grid>
           </Paper>
           <AnchorDrawer
+            id={id}
             open={open}
+            creative={creative?.data}
+            localState={localState}
             onOpen={() => setOpen(true)}
             onClose={() => setOpen(false)}
-            element={
-              <Grid container paddingY={8}>
-                <Grid item xs display="flex" flexDirection="column" justifyContent="start" alignItems="end">
-                  <TextField
-                    {...register("width")}
-                    id="width"
-                    margin="normal"
-                    label="largeur"
-                    type="number"
-                    onChange={(e) => setFormat({ ...format, width: parseInt(e.target.value) })}
-                  />
-                  {errors["width"] && (
-                    <Typography variant="caption" color="darkred">
-                      {errors["width"]?.message as never}
-                    </Typography>
-                  )}
-                </Grid>
-                <Grid item xs display="flex" flexDirection="column" justifyContent="start" alignItems="start">
-                  <TextField
-                    {...register("height")}
-                    id="height"
-                    margin="normal"
-                    label="hauteur"
-                    type="number"
-                    onChange={(e) => setFormat({ ...format, height: parseInt(e.target.value) })}
-                  />
-                  {errors["height"] && (
-                    <Typography variant="caption" color="darkred">
-                      {errors["height"]?.message as never}
-                    </Typography>
-                  )}
-                </Grid>
-                <Grid item xs={12} display="flex" justifyContent="center" alignItems="center">
-                  <Button label="Ajouter" onClick={handleSubmit(addFormat)} />
-                </Grid>
-              </Grid>
-            }
           />
         </>
       }
       footer={
         <Grid container item xs={12} spacing={3} marginTop="auto" justifyContent="center">
-          <Button label="Sauvegarder" onClick={submitUpdate} />
+          <Button label="Sauvegarder" onClick={handleSubmit(submitUpdate)} />
           <Button label="Annuler" variant="outlined" onClick={() => navigate(-1)} />
           <Button label="Supprimer" color="error" variant="outlined" onClick={() => deleteMutation.mutate()} />
         </Grid>

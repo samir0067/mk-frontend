@@ -7,9 +7,9 @@ type GetTitleProps = {
   primary: string;
 };
 
-export const GetTitle: FC<GetTitleProps> = ({ idFocused, id, primary }) => {
+export const Title: FC<GetTitleProps> = ({ idFocused, id, primary }) => {
   return (
-    <Grid item xs={3} paddingRight="8px">
+    <Grid data-testid="getTitle-id" item xs={3} paddingRight="8px">
       <Typography variant="h6" sx={{ ...(idFocused === id && { fontWeight: "bold" }) }}>
         {primary}
       </Typography>
